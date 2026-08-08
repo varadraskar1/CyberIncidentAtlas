@@ -5,6 +5,7 @@
   "description": "Schema for an evidence-backed cybersecurity incident record.",
   "type": "object",
   "additionalProperties": false,
+
   "required": [
     "incident_id",
     "title",
@@ -17,11 +18,12 @@
     "sources",
     "confidence"
   ],
+
   "properties": {
+
     "incident_id": {
       "type": "string",
-      "pattern": "^INC-[0-9]{4}-[0-9]{4}$",
-      "description": "Permanent unique identifier for the incident."
+      "pattern": "^INC-[0-9]{4}-[0-9]{4}$"
     },
 
     "title": {
@@ -42,18 +44,18 @@
     "dates": {
       "type": "object",
       "additionalProperties": false,
+
       "properties": {
         "intrusion_start": {
-          "type": ["string", "null"],
-          "format": "date"
+          "$ref": "#/$defs/date_value"
         },
+
         "discovered": {
-          "type": ["string", "null"],
-          "format": "date"
+          "$ref": "#/$defs/date_value"
         },
+
         "disclosed": {
-          "type": ["string", "null"],
-          "format": "date"
+          "$ref": "#/$defs/date_value"
         }
       }
     },
@@ -61,57 +63,73 @@
     "victim": {
       "type": "object",
       "additionalProperties": false,
+
       "required": [
         "organization",
         "country",
         "sector"
       ],
+
       "properties": {
+
         "organization": {
           "type": "string"
         },
+
         "country": {
           "type": "string",
           "minLength": 2
         },
+
         "sector": {
           "type": "string"
         },
+
         "organization_type": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
 
     "incident_type": {
       "type": "array",
+      "minItems": 1,
+
       "items": {
         "type": "string"
-      },
-      "minItems": 1
+      }
     },
 
     "attack": {
       "type": "object",
       "additionalProperties": false,
+
       "properties": {
+
         "initial_access": {
           "type": "array",
+
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/evidence_item"
           }
         },
+
         "attack_vectors": {
           "type": "array",
+
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/evidence_item"
           }
         },
+
         "mitre_attack_techniques": {
           "type": "array",
+
           "items": {
-            "type": "string",
-            "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
+            "$ref": "#/$defs/technique"
           }
         }
       }
@@ -120,68 +138,90 @@
     "impact": {
       "type": "object",
       "additionalProperties": false,
+
       "properties": {
+
         "data_compromised": {
           "type": "array",
+
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/evidence_item"
           }
         },
+
         "records_affected": {
-          "type": ["integer", "null"],
-          "minimum": 0
+          "$ref": "#/$defs/numeric_claim"
         },
+
         "financial_impact": {
-          "type": ["number", "null"],
-          "minimum": 0
+          "$ref": "#/$defs/numeric_claim"
         },
+
         "financial_currency": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
+
         "operational_impact": {
-          "type": ["string", "null"]
+          "$ref": "#/$defs/evidence_item"
         }
       }
     },
 
     "threat_actors": {
       "type": "array",
+
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/attribution"
       }
     },
 
     "vulnerabilities": {
       "type": "array",
+
       "items": {
-        "type": "string",
-        "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
+        "$ref": "#/$defs/vulnerability"
       }
     },
 
     "malware": {
       "type": "array",
+
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/evidence_item"
       }
     },
 
     "timeline": {
       "type": "array",
+
       "items": {
         "type": "object",
         "additionalProperties": false,
+
         "required": [
           "date",
           "event"
         ],
+
         "properties": {
+
           "date": {
-            "type": "string",
-            "format": "date"
+            "$ref": "#/$defs/date_value"
           },
+
           "event": {
             "type": "string"
+          },
+
+          "source_refs": {
+            "type": "array",
+
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
@@ -189,42 +229,57 @@
 
     "root_cause": {
       "type": "array",
+
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/evidence_item"
       }
     },
 
     "response": {
       "type": "array",
+
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/evidence_item"
       }
     },
 
     "lessons_learned": {
       "type": "array",
+
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/evidence_item"
       }
     },
 
     "sources": {
       "type": "array",
       "minItems": 1,
+
       "items": {
         "type": "object",
         "additionalProperties": false,
+
         "required": [
+          "source_id",
           "url",
           "source_type"
         ],
+
         "properties": {
+
+          "source_id": {
+            "type": "string",
+            "pattern": "^SRC-[0-9]{3,}$"
+          },
+
           "url": {
             "type": "string",
             "format": "uri"
           },
+
           "source_type": {
             "type": "string",
+
             "enum": [
               "primary",
               "government",
@@ -235,15 +290,27 @@
               "other"
             ]
           },
+
           "publisher": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
+
           "published_date": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date"
           },
+
           "description": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         }
       }
@@ -252,12 +319,16 @@
     "confidence": {
       "type": "object",
       "additionalProperties": false,
+
       "required": [
         "overall"
       ],
+
       "properties": {
+
         "overall": {
           "type": "string",
+
           "enum": [
             "high",
             "medium",
@@ -265,8 +336,266 @@
             "unknown"
           ]
         },
+
         "notes": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+
+  "$defs": {
+
+    "date_value": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "value",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "confidence": {
+      "type": "string",
+
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+
+    "evidence_item": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "value",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "value": {
+          "type": "string"
+        },
+
+        "status": {
+          "type": "string",
+
+          "enum": [
+            "confirmed",
+            "reported",
+            "suspected",
+            "disputed",
+            "analysis"
+          ]
+        },
+
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "numeric_claim": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "value",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+
+        "status": {
+          "type": "string",
+
+          "enum": [
+            "confirmed",
+            "reported",
+            "estimated",
+            "potential",
+            "disputed",
+            "unknown"
+          ]
+        },
+
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "technique": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "id",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "id": {
+          "type": "string",
+          "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
+        },
+
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "vulnerability": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "id",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "id": {
+          "type": "string",
+          "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
+        },
+
+        "exploitation_confirmed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "required": [
+        "name",
+        "confidence"
+      ],
+
+      "properties": {
+
+        "name": {
+          "type": "string"
+        },
+
+        "confidence": {
+          "type": "string",
+
+          "enum": [
+            "confirmed",
+            "high",
+            "medium",
+            "low",
+            "suspected",
+            "unknown",
+            "disputed"
+          ]
+        },
+
+        "attributed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+
+        "source_refs": {
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
