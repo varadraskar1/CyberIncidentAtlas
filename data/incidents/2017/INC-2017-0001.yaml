@@ -1,4 +1,4 @@
-incident_id: INC-2017-0001
+﻿incident_id: INC-2017-0001
 
 title: "Equifax 2017 Data Breach"
 
@@ -9,19 +9,19 @@ dates:
     value: "2017-05-13"
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   discovered:
     value: "2017-07-29"
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   disclosed:
     value: "2017-09-07"
     confidence: high
     source_refs:
-      - SRC-002
+      - SRC-000002
 
 
 victim:
@@ -44,34 +44,34 @@ attack:
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     - value: "Exploitation of Apache Struts vulnerability"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-001
-        - SRC-003
+        - SRC-000001
+        - SRC-000003
 
   attack_vectors:
     - value: "Remote code execution"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-003
+        - SRC-000003
 
     - value: "Exploitation of vulnerable Apache Struts component"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-001
-        - SRC-003
+        - SRC-000001
+        - SRC-000003
 
   mitre_attack_techniques:
     - id: "T1190"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
 
 impact:
@@ -81,43 +81,43 @@ impact:
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Dates of birth"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Social Security numbers"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Physical addresses"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Driver's license numbers"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Payment card numbers"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     - value: "Credit dispute documents"
       status: confirmed
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
   records_affected:
     value: 145500000
@@ -125,7 +125,7 @@ impact:
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-002
+      - SRC-000002
 
   financial_impact:
     value: null
@@ -141,7 +141,7 @@ impact:
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
 threat_actors: []
@@ -152,8 +152,8 @@ vulnerabilities:
     exploitation_confirmed: true
     confidence: high
     source_refs:
-      - SRC-001
-      - SRC-003
+      - SRC-000001
+      - SRC-000003
 
 
 malware: []
@@ -165,84 +165,84 @@ timeline:
       value: "2017-03-08"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Equifax received a U.S. CERT alert regarding a critical Apache Struts vulnerability."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-03-09"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Equifax circulated the vulnerability notification internally."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-05-13"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Attackers gained access to Equifax systems through the online dispute portal."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-07-29"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Equifax detected suspicious traffic associated with the online dispute portal."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-07-30"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Equifax observed additional suspicious activity and took the affected portal offline."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-08-02"
       confidence: high
       source_refs:
-        - SRC-001
+        - SRC-000001
 
     event: "Equifax hired cybersecurity and forensic experts and notified the FBI."
 
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
   - date:
       value: "2017-09-07"
       confidence: high
       source_refs:
-        - SRC-002
+        - SRC-000002
 
     event: "Equifax publicly disclosed the data breach."
 
     source_refs:
-      - SRC-002
+      - SRC-000002
 
 
 root_cause:
@@ -251,37 +251,37 @@ root_cause:
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Incomplete asset inventory prevented Equifax from identifying the vulnerable system."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Vulnerability scanning failed to identify the vulnerable Apache Struts installation."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Insufficient network segmentation allowed attackers to access additional databases."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Plaintext credentials stored on an internal file share enabled access to additional systems."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Insufficient intrusion detection capabilities delayed detection."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
 response:
@@ -290,31 +290,31 @@ response:
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Cybersecurity and forensic experts were engaged."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "The FBI was notified."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Equifax initiated an investigation into the scope and impact of the breach."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Equifax implemented security improvements following the incident."
     status: confirmed
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
 lessons_learned:
@@ -323,56 +323,56 @@ lessons_learned:
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Asset inventories must accurately identify software and systems exposed to vulnerabilities."
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Network segmentation can limit the impact of a compromised application."
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Credentials should not be stored in plaintext."
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Security monitoring must provide visibility into critical network traffic."
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
   - value: "Vulnerability scanning should be validated rather than treated as proof that systems are secure."
     status: analysis
     confidence: high
     source_refs:
-      - SRC-001
+      - SRC-000001
 
 
 sources:
 
-  - source_id: SRC-001
+  - source_id: SRC-000001
     url: "https://www.gao.gov/products/GAO-18-559"
     source_type: government
     publisher: "U.S. Government Accountability Office"
     published_date: "2018-08-30"
     description: "GAO report examining actions taken by Equifax and federal agencies following the breach."
 
-  - source_id: SRC-002
+  - source_id: SRC-000002
     url: "https://www.ftc.gov/news-events/news/press-releases/2019/07/equifax-pay-575-million-part-settlement-ftc-cfpb-states-related-2017-data-breach"
     source_type: government
     publisher: "Federal Trade Commission"
     published_date: "2019-07-22"
     description: "FTC announcement describing the breach, affected information, security failures, and regulatory settlement."
 
-  - source_id: SRC-003
+  - source_id: SRC-000003
     url: "https://nvd.nist.gov/vuln/detail/CVE-2017-5638"
     source_type: government
     publisher: "National Institute of Standards and Technology"

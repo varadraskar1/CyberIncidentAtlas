@@ -110,12 +110,54 @@ Do not remove uncertainty simply to make a record look cleaner.
 
 # 6. Source References
 
-Sources have unique IDs.
+Sources are maintained in the central registry:
+
+```text
+data/sources/sources.yaml
+```
+
+Every source has a globally unique six-digit source ID.
 
 Example:
 
 ```yaml
-sources:
-  - source_id: SRC-001
-    url: "https://example.com/report"
-    source_type: security_research
+source_id: SRC-000001
+url: "https://example.com/report"
+source_type: security_research
+```
+
+Incident records reference these global source IDs using `source_refs`.
+
+Example:
+
+```yaml
+source_refs:
+  - SRC-000001
+  - SRC-000004
+```
+
+Do **not** create local source IDs such as:
+
+```text
+SRC-001
+SRC-002
+SRC-003
+```
+
+When adding a new source:
+
+1. Check `data/sources/sources.yaml`.
+2. Find the next available `SRC-XXXXXX` ID.
+3. Add the source to the central registry.
+4. Reference that ID from the incident using `source_refs`.
+5. Run the validator.
+
+Every `source_refs` value must correspond to an existing source in the central registry.
+
+Run:
+
+```powershell
+py scripts/validate.py
+```
+
+before submitting a contribution.

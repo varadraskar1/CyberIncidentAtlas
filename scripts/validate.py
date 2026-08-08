@@ -104,37 +104,14 @@ def collect_source_references(data: dict) -> list[str]:
 
 def validate_source_ids(data: dict) -> list[str]:
     errors = []
-    seen = set()
-
-    for source in data.get("sources", []):
-
-        if not isinstance(source, dict):
-            continue
-
-        source_id = source.get("source_id")
-
-        if not source_id:
-            continue
-
-        if source_id in seen:
-            errors.append(
-                f"semantic: duplicate source ID: {source_id}"
-            )
-
-        seen.add(source_id)
-
-        if not INCIDENT_SOURCE_ID_PATTERN.fullmatch(source_id):
-            errors.append(
-                f"semantic: invalid source ID: {source_id}"
-            )
 
     references = collect_source_references(data)
-    defined_sources = collect_source_ids(data)
 
     for reference in references:
-        if reference not in defined_sources:
+
+        if not GLOBAL_SOURCE_ID_PATTERN.fullmatch(reference):
             errors.append(
-                f"semantic: source reference does not exist: {reference}"
+                f"semantic: invalid global source reference: {reference}"
             )
 
     return errors
@@ -349,9 +326,10 @@ def validate_duplicate_incident_ids(
 def validate_source_registry(
     path: Path,
     schema: dict,
-) -> list[str]:
+) -> tuple[list[str], set[str]]:
 
     errors = []
+    source_ids = set()
 
     try:
         data = load_yaml(path)
@@ -359,21 +337,19 @@ def validate_source_registry(
     except Exception as exc:
         return [
             f"YAML parsing error: {exc}"
-        ]
+        ], source_ids
 
     if not isinstance(data, dict):
         return [
             "semantic: source registry root must be a YAML object"
-        ]
+        ], source_ids
 
     sources = data.get("sources")
 
     if not isinstance(sources, list):
         return [
             "semantic: source registry 'sources' must be a YAML list"
-        ]
-
-    seen_ids = set()
+        ], source_ids
 
     for index, source in enumerate(sources):
 
@@ -385,7 +361,7 @@ def validate_source_registry(
             )
             continue
 
-        # Validate source against JSON Schema
+        # JSON Schema validation
         source_errors = validate_schema(
             source,
             schema,
@@ -401,21 +377,63 @@ def validate_source_registry(
         if not source_id:
             continue
 
-        # Global source IDs must use six digits.
+        # Global IDs must use exactly six digits.
         if not GLOBAL_SOURCE_ID_PATTERN.fullmatch(source_id):
-
             errors.append(
                 f"semantic: invalid global source ID: {source_id}"
             )
 
-        # Duplicate detection
-        if source_id in seen_ids:
-
+        # Duplicate detection.
+        if source_id in source_ids:
             errors.append(
                 f"semantic: duplicate global source ID: {source_id}"
             )
 
-        seen_ids.add(source_id)
+        source_ids.add(source_id)
+
+    return errors, source_ids
+
+
+# ---------------------------------------------------------------------------
+# Cross-reference validation
+# ---------------------------------------------------------------------------
+
+def validate_incident_source_references(
+    incidents: list[Path],
+    registry_source_ids: set[str],
+) -> list[str]:
+
+    errors = []
+
+    for path in incidents:
+
+        try:
+            data = load_yaml(path)
+
+        except Exception:
+            continue
+
+        if not isinstance(data, dict):
+            continue
+
+        incident_id = data.get(
+            "incident_id",
+            path.stem,
+        )
+
+        references = collect_source_references(data)
+
+        for reference in references:
+
+            # Ignore the old embedded-source references for now.
+            # They will be migrated in the next architecture step.
+            if reference.startswith("SRC-") and len(reference) == 10:
+                if reference not in registry_source_ids:
+                    errors.append(
+                        f"semantic: {incident_id}: "
+                        f"source reference '{reference}' "
+                        f"does not exist in central source registry"
+                    )
 
     return errors
 
@@ -430,7 +448,7 @@ def main() -> int:
     print("=" * 32)
 
     # -----------------------------------------------------------------------
-    # Check incident schema
+    # Load incident schema
     # -----------------------------------------------------------------------
 
     if not INCIDENT_SCHEMA_PATH.exists():
@@ -456,7 +474,7 @@ def main() -> int:
         return 1
 
     # -----------------------------------------------------------------------
-    # Check source schema
+    # Load source schema
     # -----------------------------------------------------------------------
 
     if not SOURCE_SCHEMA_PATH.exists():
@@ -482,7 +500,7 @@ def main() -> int:
         return 1
 
     # -----------------------------------------------------------------------
-    # Incident validation
+    # Find incidents
     # -----------------------------------------------------------------------
 
     if not INCIDENTS_PATH.exists():
@@ -552,10 +570,11 @@ def main() -> int:
         print("\nNo incident files found.")
 
     # -----------------------------------------------------------------------
-    # Source registry validation
+    # Source registry
     # -----------------------------------------------------------------------
 
     failed_sources = 0
+    registry_source_ids = set()
 
     print(
         "\nChecking source registry: "
@@ -575,9 +594,11 @@ def main() -> int:
 
     else:
 
-        source_errors = validate_source_registry(
-            SOURCES_PATH,
-            source_schema,
+        source_errors, registry_source_ids = (
+            validate_source_registry(
+                SOURCES_PATH,
+                source_schema,
+            )
         )
 
         if source_errors:
@@ -597,6 +618,36 @@ def main() -> int:
             print("  ✅ PASSED")
 
     # -----------------------------------------------------------------------
+    # Cross-reference validation
+    # -----------------------------------------------------------------------
+
+    reference_errors = validate_incident_source_references(
+        incidents,
+        registry_source_ids,
+    )
+
+    if reference_errors:
+
+        print(
+            "\nSource reference validation:"
+        )
+
+        for error in reference_errors:
+            print(
+                f"  ❌ {error}"
+            )
+
+    else:
+
+        print(
+            "\nSource reference validation:"
+        )
+
+        print(
+            "  ✅ PASSED"
+        )
+
+    # -----------------------------------------------------------------------
     # Summary
     # -----------------------------------------------------------------------
 
@@ -614,9 +665,15 @@ def main() -> int:
         f"Source registry failures: {failed_sources}"
     )
 
+    print(
+        f"Source reference failures: "
+        f"{len(reference_errors)}"
+    )
+
     total_failures = (
-        failed_incidents +
-        failed_sources
+        failed_incidents
+        + failed_sources
+        + len(reference_errors)
     )
 
     if total_failures:

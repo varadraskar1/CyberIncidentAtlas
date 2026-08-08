@@ -7,17 +7,16 @@
   "additionalProperties": false,
 
   "required": [
-    "incident_id",
-    "title",
-    "status",
-    "dates",
-    "victim",
-    "incident_type",
-    "attack",
-    "impact",
-    "sources",
-    "confidence"
-  ],
+  "incident_id",
+  "title",
+  "status",
+  "dates",
+  "victim",
+  "incident_type",
+  "attack",
+  "impact",
+  "confidence"
+],
 
   "properties": {
     "incident_id": {
