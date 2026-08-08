@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cyberincidentatlas.org/schemas/incident.schema.json",
+  "title": "CyberIncidentAtlas Incident",
+  "description": "Schema for an evidence-backed cybersecurity incident record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "incident_id",
+    "title",
+    "status",
+    "dates",
+    "victim",
+    "incident_type",
+    "attack",
+    "impact",
+    "sources",
+    "confidence"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^INC-[0-9]{4}-[0-9]{4}$",
+      "description": "Permanent unique identifier for the incident."
+    },
+
+    "title": {
+      "type": "string",
+      "minLength": 5
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "reported",
+        "suspected",
+        "disputed"
+      ]
+    },
+
+    "dates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intrusion_start": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "discovered": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "disclosed": {
+          "type": ["string", "null"],
+          "format": "date"
+        }
+      }
+    },
+
+    "victim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organization",
+        "country",
+        "sector"
+      ],
+      "properties": {
+        "organization": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "minLength": 2
+        },
+        "sector": {
+          "type": "string"
+        },
+        "organization_type": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+
+    "incident_type": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+
+    "attack": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "initial_access": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attack_vectors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mitre_attack_techniques": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
+          }
+        }
+      }
+    },
+
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "data_compromised": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "records_affected": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "financial_impact": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "financial_currency": {
+          "type": ["string", "null"]
+        },
+        "operational_impact": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+
+    "threat_actors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "vulnerabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
+      }
+    },
+
+    "malware": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "event"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "event": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "root_cause": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "response": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "lessons_learned": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url",
+          "source_type"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "government",
+              "security_research",
+              "academic",
+              "journalism",
+              "industry",
+              "other"
+            ]
+          },
+          "publisher": {
+            "type": ["string", "null"]
+          },
+          "published_date": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "description": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overall"
+      ],
+      "properties": {
+        "overall": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ]
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}
