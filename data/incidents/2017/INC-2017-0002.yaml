@@ -1,0 +1,367 @@
+incident_id: INC-2017-0002
+
+title: "WannaCry Ransomware Attack"
+
+status: confirmed
+
+dates:
+  intrusion_start:
+    value: "2017-05-12"
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-002
+
+  discovered:
+    value: "2017-05-12"
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-002
+
+  disclosed:
+    value: "2017-05-12"
+    confidence: high
+    source_refs:
+      - SRC-001
+
+
+victim:
+  organization: "Multiple organizations worldwide"
+  country: "Global"
+  sector: "Multiple sectors"
+  organization_type: "Multiple organizations"
+
+
+incident_type:
+  - ransomware
+  - malware
+  - worm
+  - vulnerability_exploitation
+  - operational_disruption
+
+
+attack:
+
+  initial_access:
+    - value: "Exploitation of vulnerable Microsoft SMBv1 systems"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-002
+        - SRC-003
+        - SRC-004
+
+  attack_vectors:
+    - value: "Exploitation of the SMBv1 vulnerability associated with EternalBlue"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-002
+        - SRC-003
+        - SRC-004
+
+    - value: "Worm-like self-propagation across vulnerable networked systems"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-002
+        - SRC-005
+
+  mitre_attack_techniques:
+    - id: "T1210"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+    - id: "T1486"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+    - id: "T1543.003"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+    - id: "T1018"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+    - id: "T1083"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+    - id: "T1490"
+      confidence: high
+      source_refs:
+        - SRC-005
+
+
+impact:
+
+  data_compromised:
+    - value: "Files and data on infected systems were encrypted"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-001
+        - SRC-005
+
+  records_affected:
+    value: null
+    unit: "systems"
+    status: unknown
+    confidence: unknown
+    source_refs: []
+
+  financial_impact:
+    value: null
+    unit: "USD"
+    status: unknown
+    confidence: unknown
+    source_refs: []
+
+  financial_currency: "USD"
+
+  operational_impact:
+    value: "WannaCry caused widespread operational disruption across multiple sectors and countries, including significant disruption to NHS services in England."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-006
+
+
+threat_actors: []
+
+
+vulnerabilities:
+  - id: "CVE-2017-0145"
+    exploitation_confirmed: true
+    confidence: high
+    source_refs:
+      - SRC-003
+      - SRC-004
+
+
+malware:
+  - value: "WannaCry"
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+
+  - value: "WanaCrypt"
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+
+  - value: "WanaCrypt0r"
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+
+  - value: "WCry"
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+
+
+timeline:
+
+  - date:
+      value: "2017-03-14"
+      confidence: high
+      source_refs:
+        - SRC-004
+
+    event: "Microsoft published security bulletin MS17-010 addressing critical SMBv1 vulnerabilities."
+
+    source_refs:
+      - SRC-004
+
+
+  - date:
+      value: "2017-05-12"
+      confidence: high
+      source_refs:
+        - SRC-001
+        - SRC-002
+
+    event: "WannaCry began spreading globally as ransomware with worm-like propagation capabilities."
+
+    source_refs:
+      - SRC-001
+      - SRC-002
+
+
+  - date:
+      value: "2017-05-12"
+      confidence: high
+      source_refs:
+        - SRC-001
+
+    event: "The ransomware attack caused widespread disruption to NHS services in England."
+
+    source_refs:
+      - SRC-001
+
+
+  - date:
+      value: "2017-05-13"
+      confidence: high
+      source_refs:
+        - SRC-002
+
+    event: "Microsoft published additional customer guidance for WannaCrypt and expanded availability of security updates for unsupported Windows platforms."
+
+    source_refs:
+      - SRC-002
+
+
+  - date:
+      value: "2017-05-15"
+      confidence: medium
+      source_refs:
+        - SRC-006
+
+    event: "The UK National Audit Office later assessed the NHS incident and its causes, including failures to apply available security updates."
+
+    source_refs:
+      - SRC-006
+
+
+root_cause:
+
+  - value: "Large numbers of systems remained vulnerable to the SMBv1 vulnerability despite Microsoft releasing MS17-010 before the attack."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-004
+
+  - value: "WannaCry used the EternalBlue SMB exploit to spread between vulnerable systems."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-002
+      - SRC-003
+      - SRC-005
+
+  - value: "Legacy and unsupported Windows systems increased exposure to the attack."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-002
+
+
+response:
+
+  - value: "Microsoft issued customer guidance recommending immediate deployment of MS17-010."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-002
+      - SRC-004
+
+  - value: "Microsoft made security updates available for additional unsupported Windows platforms following the attack."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-002
+
+  - value: "Affected NHS organizations worked to restore services and recover affected systems."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-001
+
+
+lessons_learned:
+
+  - value: "Critical security updates must be deployed rapidly on internet- and network-exposed systems."
+    status: analysis
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-004
+
+  - value: "Unsupported operating systems can significantly increase organizational exposure."
+    status: analysis
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-002
+
+  - value: "Network exposure of legacy protocols such as SMBv1 can enable rapid malware propagation."
+    status: analysis
+    confidence: high
+    source_refs:
+      - SRC-004
+      - SRC-005
+
+  - value: "Worm-like ransomware can transform a vulnerability affecting individual systems into a large-scale operational disruption."
+    status: analysis
+    confidence: high
+    source_refs:
+      - SRC-001
+      - SRC-005
+
+
+sources:
+
+  - source_id: SRC-001
+    url: "https://www.nao.org.uk/press-releases/investigation-wannacry-cyber-attack-and-the-nhs/"
+    source_type: government
+    publisher: "UK National Audit Office"
+    published_date: "2017-10-27"
+    description: "National Audit Office investigation into the WannaCry attack and its impact on NHS services in England."
+
+  - source_id: SRC-002
+    url: "https://www.microsoft.com/en-us/security/blog/2017/05/12/wannacrypt-ransomware-worm-targets-out-of-date-systems/"
+    source_type: vendor_research
+    publisher: "Microsoft"
+    published_date: "2017-05-12"
+    description: "Microsoft technical analysis describing WannaCrypt's ransomware behavior, worm-like propagation, and exploitation of the SMB vulnerability."
+
+  - source_id: SRC-003
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2017-0145"
+    source_type: government
+    publisher: "National Institute of Standards and Technology"
+    published_date: "2017-03-16"
+    description: "NIST National Vulnerability Database entry for CVE-2017-0145, a Microsoft SMBv1 remote code execution vulnerability."
+
+  - source_id: SRC-004
+    url: "https://learn.microsoft.com/en-us/security-updates/SecurityBulletins/2017/ms17-010"
+    source_type: vendor_advisory
+    publisher: "Microsoft"
+    published_date: "2017-03-14"
+    description: "Microsoft Security Bulletin MS17-010 addressing critical SMBv1 vulnerabilities."
+
+  - source_id: SRC-005
+    url: "https://attack.mitre.org/software/S0366/"
+    source_type: threat_intelligence
+    publisher: "MITRE ATT&CK"
+    published_date: "2019-03-25"
+    description: "MITRE ATT&CK software profile for WannaCry, including documented techniques and aliases."
+
+  - source_id: SRC-006
+    url: "https://www.nao.org.uk/press-releases/investigation-wannacry-cyber-attack-and-the-nhs/"
+    source_type: government
+    publisher: "UK National Audit Office"
+    published_date: "2017-10-27"
+    description: "Government assessment of the NHS WannaCry incident, including patching and legacy-system issues."
+
+
+confidence:
+
+  overall: high
+
+  notes: "Core facts about WannaCry's global outbreak, ransomware behavior, SMBv1 exploitation, and NHS impact are supported by Microsoft, NIST, MITRE ATT&CK, and UK government evidence. The record intentionally does not assign a confirmed threat actor because attribution requires separate treatment from malware identification."
