@@ -20,7 +20,6 @@
   ],
 
   "properties": {
-
     "incident_id": {
       "type": "string",
       "pattern": "^INC-[0-9]{4}-[0-9]{4}$"
@@ -71,7 +70,6 @@
       ],
 
       "properties": {
-
         "organization": {
           "type": "string"
         },
@@ -108,7 +106,6 @@
       "additionalProperties": false,
 
       "properties": {
-
         "initial_access": {
           "type": "array",
 
@@ -140,7 +137,6 @@
       "additionalProperties": false,
 
       "properties": {
-
         "data_compromised": {
           "type": "array",
 
@@ -207,7 +203,6 @@
         ],
 
         "properties": {
-
           "date": {
             "$ref": "#/$defs/date_value"
           },
@@ -266,7 +261,6 @@
         ],
 
         "properties": {
-
           "source_id": {
             "type": "string",
             "pattern": "^SRC-[0-9]{3,}$"
@@ -284,9 +278,12 @@
               "primary",
               "government",
               "security_research",
+              "vendor_research",
+              "vendor_advisory",
               "academic",
               "journalism",
               "industry",
+              "threat_intelligence",
               "other"
             ]
           },
@@ -325,7 +322,6 @@
       ],
 
       "properties": {
-
         "overall": {
           "type": "string",
 
@@ -348,7 +344,6 @@
   },
 
   "$defs": {
-
     "date_value": {
       "type": "object",
       "additionalProperties": false,
@@ -359,7 +354,6 @@
       ],
 
       "properties": {
-
         "value": {
           "type": [
             "string",
@@ -403,7 +397,6 @@
       ],
 
       "properties": {
-
         "value": {
           "type": "string"
         },
@@ -444,7 +437,6 @@
       ],
 
       "properties": {
-
         "value": {
           "type": [
             "number",
@@ -497,7 +489,6 @@
       ],
 
       "properties": {
-
         "id": {
           "type": "string",
           "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"
@@ -527,7 +518,6 @@
       ],
 
       "properties": {
-
         "id": {
           "type": "string",
           "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
@@ -564,7 +554,6 @@
       ],
 
       "properties": {
-
         "name": {
           "type": "string"
         },
