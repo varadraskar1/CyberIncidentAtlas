@@ -9,15 +9,24 @@ from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA_PATH = ROOT / "schemas" / "incident.schema.json"
+
+INCIDENT_SCHEMA_PATH = ROOT / "schemas" / "incident.schema.json"
+SOURCE_SCHEMA_PATH = ROOT / "schemas" / "source.schema.json"
+
 INCIDENTS_PATH = ROOT / "data" / "incidents"
+SOURCES_PATH = ROOT / "data" / "sources" / "sources.yaml"
 
 
 INCIDENT_ID_PATTERN = re.compile(r"^INC-\d{4}-\d{4}$")
-SOURCE_ID_PATTERN = re.compile(r"^SRC-\d{3,}$")
+INCIDENT_SOURCE_ID_PATTERN = re.compile(r"^SRC-\d{3,}$")
+GLOBAL_SOURCE_ID_PATTERN = re.compile(r"^SRC-\d{6}$")
 CVE_PATTERN = re.compile(r"^CVE-\d{4}-\d{4,}$")
 MITRE_PATTERN = re.compile(r"^T\d{4}(\.\d{3})?$")
 
+
+# ---------------------------------------------------------------------------
+# File loading
+# ---------------------------------------------------------------------------
 
 def load_yaml(path: Path):
     with path.open("r", encoding="utf-8") as file:
@@ -28,6 +37,10 @@ def load_json(path: Path):
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
 
+
+# ---------------------------------------------------------------------------
+# JSON Schema validation
+# ---------------------------------------------------------------------------
 
 def validate_schema(data: dict, schema: dict) -> list[str]:
     validator = Draft202012Validator(schema)
@@ -45,10 +58,16 @@ def validate_schema(data: dict, schema: dict) -> list[str]:
         if not location:
             location = "root"
 
-        results.append(f"schema: {location}: {error.message}")
+        results.append(
+            f"schema: {location}: {error.message}"
+        )
 
     return results
 
+
+# ---------------------------------------------------------------------------
+# Incident validation
+# ---------------------------------------------------------------------------
 
 def collect_source_ids(data: dict) -> set[str]:
     return {
@@ -64,9 +83,12 @@ def collect_source_references(data: dict) -> list[str]:
     def walk(value):
         if isinstance(value, dict):
             for key, child in value.items():
+
                 if key == "source_refs" and isinstance(child, list):
                     references.extend(
-                        ref for ref in child if isinstance(ref, str)
+                        ref
+                        for ref in child
+                        if isinstance(ref, str)
                     )
                 else:
                     walk(child)
@@ -76,6 +98,7 @@ def collect_source_references(data: dict) -> list[str]:
                 walk(item)
 
     walk(data)
+
     return references
 
 
@@ -84,7 +107,14 @@ def validate_source_ids(data: dict) -> list[str]:
     seen = set()
 
     for source in data.get("sources", []):
+
+        if not isinstance(source, dict):
+            continue
+
         source_id = source.get("source_id")
+
+        if not source_id:
+            continue
 
         if source_id in seen:
             errors.append(
@@ -93,7 +123,7 @@ def validate_source_ids(data: dict) -> list[str]:
 
         seen.add(source_id)
 
-        if not SOURCE_ID_PATTERN.fullmatch(source_id):
+        if not INCIDENT_SOURCE_ID_PATTERN.fullmatch(source_id):
             errors.append(
                 f"semantic: invalid source ID: {source_id}"
             )
@@ -110,7 +140,11 @@ def validate_source_ids(data: dict) -> list[str]:
     return errors
 
 
-def validate_incident_id(data: dict, path: Path) -> list[str]:
+def validate_incident_id(
+    data: dict,
+    path: Path,
+) -> list[str]:
+
     errors = []
 
     incident_id = data.get("incident_id")
@@ -138,6 +172,10 @@ def validate_vulnerabilities(data: dict) -> list[str]:
     errors = []
 
     for vulnerability in data.get("vulnerabilities", []):
+
+        if not isinstance(vulnerability, dict):
+            continue
+
         cve = vulnerability.get("id")
 
         if cve and not CVE_PATTERN.fullmatch(cve):
@@ -157,11 +195,15 @@ def validate_mitre(data: dict) -> list[str]:
     )
 
     for technique in techniques:
+
+        if not isinstance(technique, dict):
+            continue
+
         technique_id = technique.get("id")
 
         if technique_id and not MITRE_PATTERN.fullmatch(technique_id):
             errors.append(
-                f"semantic: invalid MITRE ATT&CK technique: "
+                "semantic: invalid MITRE ATT&CK technique: "
                 f"{technique_id}"
             )
 
@@ -172,11 +214,13 @@ def validate_dates(data: dict) -> list[str]:
     errors = []
 
     def check_date(value, location):
+
         if not isinstance(value, str):
             return
 
         try:
             date.fromisoformat(value)
+
         except ValueError:
             errors.append(
                 f"semantic: invalid date at {location}: {value}"
@@ -185,6 +229,7 @@ def validate_dates(data: dict) -> list[str]:
     dates = data.get("dates", {})
 
     for key, date_data in dates.items():
+
         if isinstance(date_data, dict):
             check_date(
                 date_data.get("value"),
@@ -192,6 +237,10 @@ def validate_dates(data: dict) -> list[str]:
             )
 
     for index, event in enumerate(data.get("timeline", [])):
+
+        if not isinstance(event, dict):
+            continue
+
         event_date = event.get("date")
 
         if isinstance(event_date, dict):
@@ -212,37 +261,62 @@ def validate_incident(
 
     try:
         data = load_yaml(path)
+
     except Exception as exc:
-        return [f"YAML parsing error: {exc}"]
+        return [
+            f"YAML parsing error: {exc}"
+        ]
 
     if not isinstance(data, dict):
-        return ["semantic: incident root must be a YAML object"]
+        return [
+            "semantic: incident root must be a YAML object"
+        ]
 
-    errors.extend(validate_schema(data, schema))
-    errors.extend(validate_incident_id(data, path))
-    errors.extend(validate_source_ids(data))
-    errors.extend(validate_vulnerabilities(data))
-    errors.extend(validate_mitre(data))
-    errors.extend(validate_dates(data))
+    errors.extend(
+        validate_schema(data, schema)
+    )
+
+    errors.extend(
+        validate_incident_id(data, path)
+    )
+
+    errors.extend(
+        validate_source_ids(data)
+    )
+
+    errors.extend(
+        validate_vulnerabilities(data)
+    )
+
+    errors.extend(
+        validate_mitre(data)
+    )
+
+    errors.extend(
+        validate_dates(data)
+    )
 
     return errors
 
 
 def find_incidents() -> list[Path]:
-    return sorted(INCIDENTS_PATH.rglob("*.yaml"))
+    return sorted(
+        INCIDENTS_PATH.rglob("*.yaml")
+    )
 
 
 def validate_duplicate_incident_ids(
     incidents: list[Path],
-    schema: dict,
 ) -> list[str]:
 
     errors = []
     seen = {}
 
     for path in incidents:
+
         try:
             data = load_yaml(path)
+
         except Exception:
             continue
 
@@ -255,83 +329,308 @@ def validate_duplicate_incident_ids(
             continue
 
         if incident_id in seen:
+
             errors.append(
                 "semantic: duplicate incident ID "
                 f"{incident_id}: "
                 f"{seen[incident_id]} and {path}"
             )
+
         else:
             seen[incident_id] = path
 
     return errors
 
 
+# ---------------------------------------------------------------------------
+# Central source registry validation
+# ---------------------------------------------------------------------------
+
+def validate_source_registry(
+    path: Path,
+    schema: dict,
+) -> list[str]:
+
+    errors = []
+
+    try:
+        data = load_yaml(path)
+
+    except Exception as exc:
+        return [
+            f"YAML parsing error: {exc}"
+        ]
+
+    if not isinstance(data, dict):
+        return [
+            "semantic: source registry root must be a YAML object"
+        ]
+
+    sources = data.get("sources")
+
+    if not isinstance(sources, list):
+        return [
+            "semantic: source registry 'sources' must be a YAML list"
+        ]
+
+    seen_ids = set()
+
+    for index, source in enumerate(sources):
+
+        location = f"sources[{index}]"
+
+        if not isinstance(source, dict):
+            errors.append(
+                f"semantic: {location} must be a YAML object"
+            )
+            continue
+
+        # Validate source against JSON Schema
+        source_errors = validate_schema(
+            source,
+            schema,
+        )
+
+        for error in source_errors:
+            errors.append(
+                f"{location} → {error}"
+            )
+
+        source_id = source.get("source_id")
+
+        if not source_id:
+            continue
+
+        # Global source IDs must use six digits.
+        if not GLOBAL_SOURCE_ID_PATTERN.fullmatch(source_id):
+
+            errors.append(
+                f"semantic: invalid global source ID: {source_id}"
+            )
+
+        # Duplicate detection
+        if source_id in seen_ids:
+
+            errors.append(
+                f"semantic: duplicate global source ID: {source_id}"
+            )
+
+        seen_ids.add(source_id)
+
+    return errors
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
 def main() -> int:
+
     print("CyberIncidentAtlas Validator")
     print("=" * 32)
 
-    if not SCHEMA_PATH.exists():
-        print(f"ERROR: Schema not found: {SCHEMA_PATH}")
+    # -----------------------------------------------------------------------
+    # Check incident schema
+    # -----------------------------------------------------------------------
+
+    if not INCIDENT_SCHEMA_PATH.exists():
+
+        print(
+            f"ERROR: Incident schema not found: "
+            f"{INCIDENT_SCHEMA_PATH}"
+        )
+
         return 1
 
+    try:
+        incident_schema = load_json(
+            INCIDENT_SCHEMA_PATH
+        )
+
+    except Exception as exc:
+
+        print(
+            f"ERROR: Could not load incident schema: {exc}"
+        )
+
+        return 1
+
+    # -----------------------------------------------------------------------
+    # Check source schema
+    # -----------------------------------------------------------------------
+
+    if not SOURCE_SCHEMA_PATH.exists():
+
+        print(
+            f"ERROR: Source schema not found: "
+            f"{SOURCE_SCHEMA_PATH}"
+        )
+
+        return 1
+
+    try:
+        source_schema = load_json(
+            SOURCE_SCHEMA_PATH
+        )
+
+    except Exception as exc:
+
+        print(
+            f"ERROR: Could not load source schema: {exc}"
+        )
+
+        return 1
+
+    # -----------------------------------------------------------------------
+    # Incident validation
+    # -----------------------------------------------------------------------
+
     if not INCIDENTS_PATH.exists():
+
         print(
             f"ERROR: Incident directory not found: "
             f"{INCIDENTS_PATH}"
         )
-        return 1
 
-    try:
-        schema = load_json(SCHEMA_PATH)
-    except Exception as exc:
-        print(f"ERROR: Could not load schema: {exc}")
         return 1
 
     incidents = find_incidents()
 
-    if not incidents:
-        print("No incident files found.")
-        return 0
+    failed_incidents = 0
 
-    failed = 0
+    if incidents:
 
-    for incident in incidents:
-        print(f"\nChecking: {incident.relative_to(ROOT)}")
+        for incident in incidents:
 
-        errors = validate_incident(incident, schema)
+            print(
+                f"\nChecking incident: "
+                f"{incident.relative_to(ROOT)}"
+            )
 
-        if errors:
-            failed += 1
-            print("  ❌ FAILED")
+            errors = validate_incident(
+                incident,
+                incident_schema,
+            )
 
-            for error in errors:
-                print(f"     - {error}")
-        else:
-            print("  ✅ PASSED")
+            if errors:
 
-    global_errors = validate_duplicate_incident_ids(
-        incidents,
-        schema,
+                failed_incidents += 1
+
+                print("  ❌ FAILED")
+
+                for error in errors:
+                    print(
+                        f"     - {error}"
+                    )
+
+            else:
+
+                print("  ✅ PASSED")
+
+        global_errors = validate_duplicate_incident_ids(
+            incidents
+        )
+
+        if global_errors:
+
+            failed_incidents += len(
+                global_errors
+            )
+
+            print(
+                "\nGlobal incident validation errors:"
+            )
+
+            for error in global_errors:
+
+                print(
+                    f"  ❌ {error}"
+                )
+
+    else:
+
+        print("\nNo incident files found.")
+
+    # -----------------------------------------------------------------------
+    # Source registry validation
+    # -----------------------------------------------------------------------
+
+    failed_sources = 0
+
+    print(
+        "\nChecking source registry: "
+        f"{SOURCES_PATH.relative_to(ROOT)}"
     )
 
-    if global_errors:
-        failed += len(global_errors)
+    if not SOURCES_PATH.exists():
 
-        print("\nGlobal validation errors:")
+        print("  ❌ FAILED")
 
-        for error in global_errors:
-            print(f"  ❌ {error}")
+        print(
+            f"     - source registry not found: "
+            f"{SOURCES_PATH}"
+        )
+
+        failed_sources = 1
+
+    else:
+
+        source_errors = validate_source_registry(
+            SOURCES_PATH,
+            source_schema,
+        )
+
+        if source_errors:
+
+            failed_sources = 1
+
+            print("  ❌ FAILED")
+
+            for error in source_errors:
+
+                print(
+                    f"     - {error}"
+                )
+
+        else:
+
+            print("  ✅ PASSED")
+
+    # -----------------------------------------------------------------------
+    # Summary
+    # -----------------------------------------------------------------------
 
     print("\n" + "=" * 32)
-    print(f"Checked: {len(incidents)}")
-    print(f"Failed:  {failed}")
-    print(f"Passed:  {len(incidents) - min(failed, len(incidents))}")
 
-    if failed:
-        print("\nValidation failed.")
+    print(
+        f"Incidents checked: {len(incidents)}"
+    )
+
+    print(
+        f"Incident failures: {failed_incidents}"
+    )
+
+    print(
+        f"Source registry failures: {failed_sources}"
+    )
+
+    total_failures = (
+        failed_incidents +
+        failed_sources
+    )
+
+    if total_failures:
+
+        print(
+            "\nValidation failed."
+        )
+
         return 1
 
-    print("\nAll incident records passed validation.")
+    print(
+        "\nAll CyberIncidentAtlas data passed validation."
+    )
+
     return 0
 
 

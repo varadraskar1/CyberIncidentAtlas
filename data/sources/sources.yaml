@@ -1,0 +1,94 @@
+sources:
+
+  - source_id: SRC-000001
+    url: "https://www.microsoft.com/en-us/security/blog/2017/05/12/wannacrypt-ransomware-worm-targets-out-of-date-systems/"
+    source_type: vendor_research
+    publisher: "Microsoft"
+    title: "WannaCrypt ransomware worm targets out-of-date systems"
+    published_date: "2017-05-12"
+    accessed_date: "2026-08-08"
+    description: "Microsoft analysis of the WannaCry outbreak, including its ransomware behavior, worm-like propagation, and exploitation of vulnerable SMB systems."
+    reliability: high
+    archived_url: null
+    language: "en"
+    tags:
+      - wannacry
+      - wannacrypt
+      - ransomware
+      - smb
+      - ms17-010
+
+
+  - source_id: SRC-000002
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2017-0145"
+    source_type: government
+    publisher: "National Institute of Standards and Technology"
+    title: "CVE-2017-0145"
+    published_date: "2017-03-16"
+    accessed_date: "2026-08-08"
+    description: "NIST National Vulnerability Database record for CVE-2017-0145."
+    reliability: high
+    archived_url: null
+    language: "en"
+    tags:
+      - cve
+      - cve-2017-0145
+      - smb
+      - microsoft
+
+
+  - source_id: SRC-000003
+    url: "https://learn.microsoft.com/en-us/security-updates/SecurityBulletins/2017/ms17-010"
+    source_type: vendor_advisory
+    publisher: "Microsoft"
+    title: "Microsoft Security Bulletin MS17-010"
+    published_date: "2017-03-14"
+    accessed_date: "2026-08-08"
+    description: "Microsoft security bulletin addressing critical SMBv1 vulnerabilities."
+    reliability: high
+    archived_url: null
+    language: "en"
+    tags:
+      - ms17-010
+      - smb
+      - smb1
+      - vulnerability
+      - microsoft
+
+
+  - source_id: SRC-000004
+    url: "https://attack.mitre.org/software/S0366/"
+    source_type: threat_intelligence
+    publisher: "MITRE"
+    title: "WannaCry - S0366"
+    published_date: null
+    accessed_date: "2026-08-08"
+    description: "MITRE ATT&CK software profile for WannaCry, including aliases, associated groups, and mapped techniques."
+    reliability: high
+    archived_url: null
+    language: "en"
+    tags:
+      - wannacry
+      - mitre-attack
+      - malware
+      - techniques
+      - attribution
+
+
+  - source_id: SRC-000005
+    url: "https://www.nao.org.uk/press-releases/investigation-wannacry-cyber-attack-and-the-nhs/"
+    source_type: government
+    publisher: "UK National Audit Office"
+    title: "Investigation: WannaCry cyber attack and the NHS"
+    published_date: "2017-10-27"
+    accessed_date: "2026-08-08"
+    description: "UK National Audit Office investigation into the WannaCry attack and its impact on NHS services."
+    reliability: high
+    archived_url: null
+    language: "en"
+    tags:
+      - wannacry
+      - nhs
+      - ransomware
+      - united-kingdom
+      - healthcare

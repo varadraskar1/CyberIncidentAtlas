@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cyberincidentatlas.org/schemas/source.schema.json",
+  "title": "CyberIncidentAtlas Source",
+  "description": "Schema for a reusable evidence source in CyberIncidentAtlas.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "source_id",
+    "url",
+    "source_type",
+    "publisher"
+  ],
+
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "pattern": "^SRC-[0-9]{6}$"
+    },
+
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "primary",
+        "government",
+        "security_research",
+        "vendor_research",
+        "vendor_advisory",
+        "academic",
+        "journalism",
+        "industry",
+        "threat_intelligence",
+        "other"
+      ]
+    },
+
+    "publisher": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+
+    "published_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+
+    "accessed_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+
+    "reliability": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+
+    "archived_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
