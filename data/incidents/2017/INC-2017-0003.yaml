@@ -1,0 +1,187 @@
+incident_id: INC-2017-0003
+
+title: "NotPetya Global Cyberattack"
+
+status: confirmed
+
+dates:
+  intrusion_start:
+    value: "2017-06-27"
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+  discovered:
+    value: "2017-06-27"
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+  disclosed:
+    value: "2017-06-27"
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+victim:
+  organization: "Multiple organizations worldwide"
+  country: "Global"
+  sector: "Multiple sectors"
+  organization_type: "Multiple organizations"
+
+incident_type:
+  - ransomware
+  - malware
+  - worm
+  - supply_chain_attack
+  - destructive_attack
+  - operational_disruption
+
+attack:
+  initial_access:
+    - value: "Malware was initially delivered through the update mechanism of the Ukrainian M.E.Doc financial software."
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-000006
+        - SRC-000007
+
+  attack_vectors:
+    - value: "Compromised software update mechanism"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+    - value: "Credential theft and lateral movement using administrative credentials"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+    - value: "Exploitation of Microsoft SMB vulnerabilities including EternalBlue and EternalRomance"
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-000006
+        - SRC-000007
+
+  mitre_attack_techniques:
+    - id: T1195.002
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+    - id: T1210
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+    - id: T1003
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+    - id: T1021.002
+      confidence: high
+      source_refs:
+        - SRC-000006
+
+impact:
+  data_compromised:
+    - value: "Files and system data were encrypted or rendered inaccessible on affected systems."
+      status: confirmed
+      confidence: high
+      source_refs:
+        - SRC-000007
+
+  records_affected:
+    value: null
+    unit: "systems"
+    status: unknown
+    confidence: unknown
+    source_refs: []
+
+  financial_impact:
+    value: null
+    unit: "USD"
+    status: unknown
+    confidence: unknown
+    source_refs: []
+
+  financial_currency: "USD"
+
+  operational_impact:
+    value: "The outbreak caused widespread disruption to organizations and critical business operations across multiple countries."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-000006
+      - SRC-000007
+
+threat_actors: []
+
+vulnerabilities:
+  - id: CVE-2017-0144
+    exploitation_confirmed: true
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+  - id: CVE-2017-0145
+    exploitation_confirmed: true
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+malware:
+  - value: "NotPetya"
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-000006
+      - SRC-000007
+
+timeline:
+  - date:
+      value: "2017-06-27"
+      confidence: high
+      source_refs:
+        - SRC-000006
+    event: "NotPetya infections began spreading, with the initial outbreak observed in Ukraine."
+    source_refs:
+      - SRC-000006
+
+  - date:
+      value: "2017-06-27"
+      confidence: high
+      source_refs:
+        - SRC-000007
+    event: "The malware spread through networks using multiple lateral movement techniques."
+    source_refs:
+      - SRC-000007
+
+root_cause:
+  - value: "Compromise of the M.E.Doc software update mechanism enabled the initial delivery of the malware."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+response:
+  - value: "Microsoft recommended applying MS17-010 and disabling SMBv1 where patching was not possible."
+    status: confirmed
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+lessons_learned:
+  - value: "Trusted software update mechanisms can become high-impact supply-chain attack vectors."
+    status: analysis
+    confidence: high
+    source_refs:
+      - SRC-000006
+
+confidence:
+  overall: high
+  notes: "Core facts about the initial M.E.Doc delivery mechanism and NotPetya's propagation techniques are supported by Microsoft technical analysis. The record intentionally avoids assigning a threat actor because attribution should be supported independently from malware and propagation evidence."

@@ -379,14 +379,14 @@ sources:
     published_date: "2017-03-10"
     description: "NIST National Vulnerability Database record for Apache Struts CVE-2017-5638."
 
-  - source_id: SRC-004
+  - source_id: SRC-000004
     url: "https://www.congress.gov/event/115th-congress/senate-event/LC52485/text"
     source_type: government
     publisher: "U.S. Senate"
     published_date: "2017-10-04"
     description: "Congressional hearing record containing Equifax testimony and incident timeline."
 
-  - source_id: SRC-005
+  - source_id: SRC-000005
     url: "https://www.congress.gov/committee-report/117th-congress/senate-report/1"
     source_type: government
     publisher: "U.S. Senate"
